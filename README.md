@@ -1,5 +1,5 @@
 # Tinygif
-FFMPEG wrapper to streamline the pocess of beating a video into a tiny GIF.
+FFMPEG wrapper to streamline the process of beating a video into a tiny GIF.
 
 ## How to install
 > $ ./install.sh
