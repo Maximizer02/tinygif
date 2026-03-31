@@ -10,3 +10,4 @@ FFMPEG wrapper to streamline the process of beating a video into a tiny GIF.
 ## Requirements
 - Linux
 - Bash
+- FFMPEG
