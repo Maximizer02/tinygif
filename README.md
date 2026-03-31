@@ -1,8 +1,11 @@
 # Tinygif
-Lorem ipsum dolor sit amet, consetetur sadipscing elitr.
+FFMPEG wrapper to streamline the pocess of beating a video into a tiny GIF.
+
+## How to install
+> $ ./install.sh
 
 ## How to run
-> $ ./run.sh
+> $ tinygif [options] video [result-filename]
 
 ## Requirements
 - Linux
