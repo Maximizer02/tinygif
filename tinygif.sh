@@ -49,7 +49,7 @@ else
 	output_file="$input_file.gif";
 fi
 
-color_palette="$XDG_CACHE_HOME/tinygif/$colors_$1.png";
+color_palette="$XDG_CACHE_HOME/tinygif/$1_$colors.png";
 
 # generate a colorpalette for the input file and the specified number of colors
 if [ ! -f "$color_palette" ]; then
