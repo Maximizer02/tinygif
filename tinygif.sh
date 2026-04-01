@@ -1,24 +1,27 @@
 #!/bin/bash
 
 # prints help text
-usage(){
-	echo "usage: tinygif [options] video [result-filename]"
-	echo "-c	Set the ammout of colors in the colorpalette"
-	echo "-f	Set the target fps"
-	echo "-s	Set the scale in pixel, formatted as 'w:h'"
-	echo "-h	Display this help text"
+usage() {
+	echo "usage: tinygif [options] video [result-filename]";
+	echo "-c	Set the ammout of colors in the colorpalette";
+	echo "-d	Enable dithering";
+	echo "-f	Set the target fps";
+	echo "-s	Set the scale in pixel, formatted as 'w:h'";
+	echo "-h	Display this help text";
 	exit $1;
 }
 
 # set initial value for args
 fps="20";
-scale="160:90"
-colors="64"
+scale="160:90";
+colors="64";
+dither="";
 
 # parse cli args
-while getopts "hf:s:c:" o; do
+while getopts "dhf:s:c:" o; do
 	case "${o}" in
-		c) colors="${OPTARG}";; 
+		c) colors="${OPTARG}";;
+		d) dither=":dither=bayer";;
 		f) fps="${OPTARG}";; 
 		h) usage 0;;
 		s) scale="${OPTARG}";; 
@@ -63,14 +66,14 @@ else
 fi
 
 # actually create the GIF and log infos before and after
-echo "Generating $output_file with parameters: fps=$fps colors=$colors scale=$scale";
+echo "Generating $output_file with parameters: fps=$fps colors=$colors scale=$scale dither=$([ -z $dither ] && echo false || echo true)";
 ffmpeg \
 	-hide_banner \
 	-loglevel error \
 	-y \
 	-i "$input_file" \
 	-i "$color_palette" \
-	-filter_complex "[0]fps=$fps,select='mod(n,2)',scale='$scale'[a];[a][1] paletteuse=new=1" \
+	-filter_complex "[0]fps=$fps,select='mod(n,2)',scale='$scale'[a];[a][1] paletteuse=new=1$dither" \
 	"$output_file" && \
 
 echo "The resulting GIF is $(du -h $output_file | xargs) in size";
