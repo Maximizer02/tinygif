@@ -61,11 +61,12 @@ color_palette="$XDG_CACHE_HOME/tinygif/${colors}_${input_file}.png";
 
 # approximate number of frames in resulting GIF
 output_frame_count="$(( $(get-frame-count $input_file) / ($(get-fps $input_file)) / 2))";
-echo "Result will have approximately $output_frame_count frames";
+printf "Result will have approximately \x1B[36m$output_frame_count\x1B[0m frames\n";
 
 # generate a colorpalette for the input file and the specified number of colors
 if [ ! -f "$color_palette" ]; then
-	echo "Cache miss, calculating color palette: $color_palette";
+	printf "Cache \x1B[31mmiss\x1B[0m, calculating color palette: \x1B[33m$color_palette\x1B[0m\n";
+	printf "\x1B[3mThis may take a while...\x1B[0m\n";
  	ffmpeg \
 		-loglevel error \
 		-stats \
@@ -74,11 +75,11 @@ if [ ! -f "$color_palette" ]; then
 		-vf "[0]fps=$fps,select='mod(n,2)'[a];[a]palettegen=max_colors=$colors:reserve_transparent=0" \
 		"$color_palette";
 else
-	echo "Cache hit, using color palette: $color_palette";
+	printf "Cache \x1B[32mhit\x1B[0m, using color palette: \x1B[33m$color_palette\x1B[0m\n";
 fi
 
 # actually create the GIF and log infos before and after
-echo "Generating $output_file with parameters: fps=$fps colors=$colors scale=$scale dither=$([ -z $dither ] && echo false || echo true)";
+printf "Generating $output_file with parameters: fps=\x1B[36m$fps\x1B[0m colors=\x1B[36m$colors\x1B[0m scale=\x1B[36m$scale\x1B[0m dither=$([ -z $dither ] && echo '\x1B[31mfalse' || echo '\x1B[32mtrue')\x1B[0m\n";
 ffmpeg \
 	-loglevel error \
 	-stats \
@@ -88,5 +89,5 @@ ffmpeg \
 	-filter_complex "[0]fps=$fps,select='mod(n,2)',scale='$scale'[a];[a][1] paletteuse=new=1$dither" \
 	"$output_file" && \
 
-echo "The resulting GIF is $(du -h $output_file | xargs) in size";
+printf "The resulting GIF is \x1B[32m$(du -h $output_file | cut -f1)\x1B[0m in size\n";
 
