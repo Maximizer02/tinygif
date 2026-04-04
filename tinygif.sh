@@ -51,12 +51,32 @@ fi
 
 color_palette="$XDG_CACHE_HOME/tinygif/$1_$colors.png";
 
+# get number of frames in input video
+input_frame_count=$(ffprobe -v error \
+  -select_streams v:0 \
+  -count_packets \
+  -show_entries stream=nb_read_packets \
+  -of csv=p=0 \
+  "$input_file");
+
+# get fps of input video
+input_fps=$(ffprobe \
+	-v error \
+	-select_streams v \
+	-of default=noprint_wrappers=1:nokey=1 \
+	-show_entries stream=r_frame_rate \
+	"$input_file");
+
+# approximate number of frames in resulting GIF
+output_frame_count="$(($input_frame_count / ($input_fps+1) / 2))";
+echo "Result will have approximately $output_frame_count frames";
+
 # generate a colorpalette for the input file and the specified number of colors
 if [ ! -f "$color_palette" ]; then
 	echo "Cache miss, calculating color palette: $color_palette";
  	ffmpeg \
-		-hide_banner \
 		-loglevel error \
+		-stats \
 		-y \
 		-i "$input_file" \
 		-vf "[0]fps=$fps,select='mod(n,2)'[a];[a]palettegen=max_colors=$colors:reserve_transparent=0" \
@@ -68,8 +88,8 @@ fi
 # actually create the GIF and log infos before and after
 echo "Generating $output_file with parameters: fps=$fps colors=$colors scale=$scale dither=$([ -z $dither ] && echo false || echo true)";
 ffmpeg \
-	-hide_banner \
 	-loglevel error \
+	-stats \
 	-y \
 	-i "$input_file" \
 	-i "$color_palette" \
