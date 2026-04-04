@@ -1,6 +1,5 @@
 #!/bin/bash
 
-# prints help text
 usage() {
 	echo "usage: tinygif [options] video [result-filename]";
 	echo "-c	Set the ammout of colors in the colorpalette";
@@ -9,6 +8,24 @@ usage() {
 	echo "-s	Set the scale in pixel, formatted as 'w:h'";
 	echo "-h	Display this help text";
 	exit $1;
+}
+
+get-frame-count(){
+	ffprobe -v error \
+		-select_streams v:0 \
+		-count_packets \
+		-show_entries stream=nb_read_packets \
+		-of csv=p=0 \
+		"$1";
+}
+
+get-fps(){
+	echo $(( $(ffprobe \
+		-v error \
+		-select_streams v \
+		-of default=noprint_wrappers=1:nokey=1 \
+		-show_entries stream=r_frame_rate \
+		"$input_file") + 1 ));
 }
 
 # set initial value for args
@@ -31,44 +48,19 @@ done
 shift $((OPTIND-1));
 
 # check that either 1 or 2 args were passed after the flags
-if [ $# -lt 1 ] || [ $# -gt 2 ]; then
-	usage 1;
-fi
+[ $# -lt 1 ] || [ $# -gt 2 ] && usage 1;
 
 # validate that the input file exists
 input_file="$1";
-if [ ! -f "$input_file" ]; then
-	echo "$input_file is not a valid file";
-	exit 1;
-fi
+[ ! -f "$input_file" ] && echo "$input_file is not a valid file" && exit 1;
 
 # if a second filename is provided, use that as the output filename
-if [ ! -z "$2" ]; then
-	output_file="$2";
-else
-	output_file="$input_file.gif";
-fi
+[ ! -z "$2" ] && output_file="$2" || output_file="$input_file.gif";
 
-color_palette="$XDG_CACHE_HOME/tinygif/$1_$colors.png";
-
-# get number of frames in input video
-input_frame_count=$(ffprobe -v error \
-  -select_streams v:0 \
-  -count_packets \
-  -show_entries stream=nb_read_packets \
-  -of csv=p=0 \
-  "$input_file");
-
-# get fps of input video
-input_fps=$(ffprobe \
-	-v error \
-	-select_streams v \
-	-of default=noprint_wrappers=1:nokey=1 \
-	-show_entries stream=r_frame_rate \
-	"$input_file");
+color_palette="$XDG_CACHE_HOME/tinygif/${input_file}_$colors.png";
 
 # approximate number of frames in resulting GIF
-output_frame_count="$(($input_frame_count / ($input_fps+1) / 2))";
+output_frame_count="$(( $(get-frame-count $input_file) / ($(get-fps $input_file)) / 2))";
 echo "Result will have approximately $output_frame_count frames";
 
 # generate a colorpalette for the input file and the specified number of colors
