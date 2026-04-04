@@ -59,7 +59,7 @@ if [ ! -f "$color_palette" ]; then
 		-loglevel error \
 		-y \
 		-i "$input_file" \
-		-vf "palettegen=max_colors=$colors:reserve_transparent=0" \
+		-vf "[0]fps=$fps,select='mod(n,2)'[a];[a]palettegen=max_colors=$colors:reserve_transparent=0" \
 		"$color_palette";
 else
 	echo "Cache hit, using color palette: $color_palette";
