@@ -57,7 +57,7 @@ input_file="$1";
 # if a second filename is provided, use that as the output filename
 [ ! -z "$2" ] && output_file="$2" || output_file="$input_file.gif";
 
-color_palette="$XDG_CACHE_HOME/tinygif/${input_file}_$colors.png";
+color_palette="$XDG_CACHE_HOME/tinygif/${colors}_${input_file}.png";
 
 # approximate number of frames in resulting GIF
 output_frame_count="$(( $(get-frame-count $input_file) / ($(get-fps $input_file)) / 2))";
