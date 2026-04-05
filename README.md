@@ -6,6 +6,7 @@ Discord allows non-paying customers to send files of up to 10 MB. This also appl
 
 ## How to install
 ```bash
+$ git clone git@github.com:Maximizer02/tinygif.git
 $ ./install.sh
 ```
 
