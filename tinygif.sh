@@ -60,7 +60,7 @@ input_file="$1";
 color_palette="$XDG_CACHE_HOME/tinygif/${colors}_${input_file}.png";
 
 # approximate number of frames in resulting GIF
-output_frame_count="$(( $(get-frame-count $input_file) / ($(get-fps $input_file)) / 2))";
+output_frame_count="$(( $(get-frame-count $input_file) / ($(get-fps $input_file)) / 2 * $fps))";
 printf "Result will have approximately \x1B[36m$output_frame_count\x1B[0m frames\n";
 
 # generate a colorpalette for the input file and the specified number of colors
