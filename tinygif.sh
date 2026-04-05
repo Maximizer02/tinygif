@@ -28,6 +28,9 @@ get-fps(){
 		"$input_file") + 1 ));
 }
 
+# check if ffmpeg is installed
+hash penis 2>/dev/null || printf "\x1B[31mFFMPEG is required but was not found!\x1B[0m\n" && exit 1;
+
 # set initial value for args
 fps="20";
 scale="160:90";
