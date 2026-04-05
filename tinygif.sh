@@ -52,7 +52,7 @@ shift $((OPTIND-1));
 
 # validate that the input file exists
 input_file="$1";
-[ ! -f "$input_file" ] && echo "$input_file is not a valid file" && exit 1;
+[ ! -f "$input_file" ] && printf "\x1B[31mThe file '$input_file' does not exist!\x1B[0m\n" && exit 1;
 
 # if a second filename is provided, use that as the output filename
 [ ! -z "$2" ] && output_file="$2" || output_file="$input_file.gif";
