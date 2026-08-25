@@ -29,7 +29,7 @@ get-fps(){
 }
 
 # check if ffmpeg is installed
-hash penis 2>/dev/null || printf "\x1B[31mFFMPEG is required but was not found!\x1B[0m\n" && exit 1;
+hash ffmpeg 2>/dev/null || printf "\x1B[31mFFMPEG is required but was not found!\x1B[0m\n" && exit 1;
 
 # set initial value for args
 fps="20";
@@ -42,9 +42,9 @@ while getopts "dhf:s:c:" o; do
 	case "${o}" in
 		c) colors="${OPTARG}";;
 		d) dither=":dither=bayer";;
-		f) fps="${OPTARG}";; 
+		f) fps="${OPTARG}";;
 		h) usage 0;;
-		s) scale="${OPTARG}";; 
+		s) scale="${OPTARG}";;
 		*) usage 1;;
 	esac
 done
